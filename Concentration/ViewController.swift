@@ -52,17 +52,17 @@ class ViewController: UIViewController {
         }
     }
     
-    private var emoji = Dictionary<Int, String>()
+    private var emoji = Dictionary<Card, String>()
     
     private func emoji(for card: Card) -> String {
         
-        if emoji[card.identifier] == nil {
+        if emoji[card] == nil {
             if emojiChoices.count > 0 {
-                emoji[card.identifier] = emojiChoices.remove(at: emojiChoices.count.arc4random)
+                emoji[card] = emojiChoices.remove(at: emojiChoices.count.arc4random)
             }
         }
         
-        return emoji[card.identifier] ?? "?"
+        return emoji[card] ?? "?"
     }
     
     override func viewDidLoad() {
