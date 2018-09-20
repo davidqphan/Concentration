@@ -8,20 +8,40 @@
 
 import UIKit
 
+@IBDesignable
 class PlayingCardView: UIView {
     
-    var rank: Int = 5 {
+    var faceCardScale: CGFloat = SizeRatio.faceCardImageSizeToBoundsSize {
         didSet {
             setNeedsDisplay()
             setNeedsLayout()
         }
     }
+    
+    @objc func adjustFaceCardScale(byHandlingGestureRecognizedBy recognizer: UIPinchGestureRecognizer) {
+        switch recognizer.state {
+        case .changed, .ended:
+            faceCardScale *= recognizer.scale
+            recognizer.scale = 1.0
+        default: break
+        }
+    }
+    
+    @IBInspectable
+    var rank: Int = 12 {
+        didSet {
+            setNeedsDisplay()
+            setNeedsLayout()
+        }
+    }
+    @IBInspectable
     var suit: String = "❤️" {
         didSet {
             setNeedsDisplay()
             setNeedsLayout()
         }
     }
+    @IBInspectable
     var isFaceUp: Bool = true {
         didSet {
             setNeedsDisplay()
@@ -132,11 +152,18 @@ class PlayingCardView: UIView {
         UIColor.white.setFill()
         roundedRect.fill()
         
-        if let faceCardImage = UIImage(named: rankString+suit) {
-            faceCardImage.draw(in: bounds.zoom(by: SizeRatio.faceCardImageSizeToBoundsSize))
+        if isFaceUp {
+            if let faceCardImage = UIImage(named: rankString+suit, in: Bundle(for: self.classForCoder), compatibleWith: traitCollection) {
+                faceCardImage.draw(in: bounds.zoom(by: faceCardScale))
+            } else {
+                drawPips()
+            }
         } else {
-            drawPips()
+            if let cardBackimage = UIImage(named: "cardback", in: Bundle(for: self.classForCoder), compatibleWith: traitCollection) {
+                cardBackimage.draw(in: bounds)
+            }
         }
+        
     }
 
 }
